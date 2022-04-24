@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const {addDepartment} = require('./lib/department')
+const db = require('./db/connection')
 
 //view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
 
@@ -31,22 +32,29 @@ const consumeSelection = (selection) => {
                     message: 'What is the department name? (Required)',
                     validate: dept_name => {
                         if (dept_name) {
-                            addDepartment(dept_name);
-                            return true;
+                            console.log(addDepartment(dept_name));
+                            //return true;
                         }
                         else {
                             console.log('Department name is required.');
-                            return false
+                            return false;
                         }
                     }
-
-
                 }
             ])
+            // .then (data => {
+            //     //addDepartment(data.dept_name);
+            //     // if (addDepartment(data.dept_name)) {
+            //          askQuestions()
+            //     // }
+            //     // 
+            //     //console.log(data)
+            // })
 
 
     }
 }
+
 
 
 askQuestions()
