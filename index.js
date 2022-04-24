@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const {addDepartment} = require('./lib/department')
+const {addDepartment, returnAllDepartments} = require('./lib/department')
 const db = require('./db/connection')
 
 //view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
@@ -42,38 +42,44 @@ const consumeSelection = (selection) => {
                     }
                 }
             ])
-        case "ADD A ROLE":
-            inquirer.prompt([
-                {
-                    type: 'input',
-                    name: 'role',
-                    message: 'What is the name of the role? (Required)',
-                    validate: role => {
-                        if (role) {
-                            return true;
-                        }
-                        else {
-                            console.log('Role name is required.');
-                            return false;
-                        }
-                    }
-                },
-                {
-                    type: 'input',
-                    name: 'salary',
-                    message: 'What is the salary of the role? (Required)',
-                    validate: salary => {
-                        if (salary) {
-                            return true;
-                        }
-                        else {
-                            console.log('Salary is required.');
-                            return false;
-                        }
-                    }
-                }
+        // case "ADD A ROLE":
+        //     inquirer.prompt([
+        //         {
+        //             type: 'input',
+        //             name: 'role',
+        //             message: 'What is the name of the role? (Required)',
+        //             validate: role => {
+        //                 if (role) {
+        //                     return true;
+        //                 }
+        //                 else {
+        //                     console.log('Role name is required.');
+        //                     return false;
+        //                 }
+        //             }
+        //         },
+        //         {
+        //             type: 'input',
+        //             name: 'salary',
+        //             message: 'What is the salary of the role? (Required)',
+        //             validate: salary => {
+        //                 if (salary) {
+        //                     return true;
+        //                 }
+        //                 else {
+        //                     console.log('Salary is required.');
+        //                     return false;
+        //                 }
+        //             }
+        //         },
+        //         {
+        //             type: 'rawlist',
+        //             name: 'choice',
+        //             message: 'What department does this role belong to?',
+        //             choices: returnAllDepartments()
+        //         }
 
-            ])
+            // ])
             .then (data => {
                 //addDepartment(data.dept_name);
                 // if (addDepartment(data.dept_name)) {
