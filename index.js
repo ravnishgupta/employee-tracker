@@ -32,8 +32,8 @@ const consumeSelection = (selection) => {
                     message: 'What is the department name? (Required)',
                     validate: dept_name => {
                         if (dept_name) {
-                            console.log(addDepartment(dept_name));
-                            //return true;
+                            addDepartment(dept_name);
+                            return true;
                         }
                         else {
                             console.log('Department name is required.');
@@ -42,14 +42,46 @@ const consumeSelection = (selection) => {
                     }
                 }
             ])
-            // .then (data => {
-            //     //addDepartment(data.dept_name);
-            //     // if (addDepartment(data.dept_name)) {
-            //          askQuestions()
-            //     // }
-            //     // 
-            //     //console.log(data)
-            // })
+        case "ADD A ROLE":
+            inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'role',
+                    message: 'What is the name of the role? (Required)',
+                    validate: role => {
+                        if (role) {
+                            return true;
+                        }
+                        else {
+                            console.log('Role name is required.');
+                            return false;
+                        }
+                    }
+                },
+                {
+                    type: 'input',
+                    name: 'salary',
+                    message: 'What is the salary of the role? (Required)',
+                    validate: salary => {
+                        if (salary) {
+                            return true;
+                        }
+                        else {
+                            console.log('Salary is required.');
+                            return false;
+                        }
+                    }
+                }
+
+            ])
+            .then (data => {
+                //addDepartment(data.dept_name);
+                // if (addDepartment(data.dept_name)) {
+                     askQuestions()
+                // }
+                // 
+                //console.log(data)
+            })
 
 
     }
