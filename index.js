@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const {addDepartment, getAllDepartments} = require('./lib/department')
+const {getAllRoles} = require('./lib/role')
 const db = require('./db/connection')
 const cTable = require('console.table')
 
@@ -58,6 +59,15 @@ const consumeSelection = (selection) => {
             case "VIEW ALL DEPARTMENTS":
                 var ret = ''
                 getAllDepartments(function(result){
+                    ret = result;
+                    const table = cTable.getTable(ret);
+                    console.log(table)
+                    askQuestions();
+                })
+               break;
+            case "VIEW ALL ROLES":
+                var ret = ''
+                getAllRoles(function(result){
                     ret = result;
                     const table = cTable.getTable(ret);
                     console.log(table)
