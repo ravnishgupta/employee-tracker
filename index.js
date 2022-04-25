@@ -32,7 +32,13 @@ const consumeSelection = (selection) => {
                     message: 'What is the department name? (Required)',
                     validate: dept_name => {
                         if (dept_name) {
-                            addDepartment(dept_name);
+                            // addDepartment(dept_name, function(result){
+                            //     retVal = result;
+                            // })
+                            // console.log(addDepartment(dept_name, result => {return result}))
+                            // //     console.log(result);
+                            // //     //return retVal;
+                            // // });
                             return true;
                         }
                         else {
@@ -42,52 +48,66 @@ const consumeSelection = (selection) => {
                     }
                 }
             ])
-        // case "ADD A ROLE":
-        //     inquirer.prompt([
-        //         {
-        //             type: 'input',
-        //             name: 'role',
-        //             message: 'What is the name of the role? (Required)',
-        //             validate: role => {
-        //                 if (role) {
-        //                     return true;
-        //                 }
-        //                 else {
-        //                     console.log('Role name is required.');
-        //                     return false;
-        //                 }
-        //             }
-        //         },
-        //         {
-        //             type: 'input',
-        //             name: 'salary',
-        //             message: 'What is the salary of the role? (Required)',
-        //             validate: salary => {
-        //                 if (salary) {
-        //                     return true;
-        //                 }
-        //                 else {
-        //                     console.log('Salary is required.');
-        //                     return false;
-        //                 }
-        //             }
-        //         },
-        //         {
-        //             type: 'rawlist',
-        //             name: 'choice',
-        //             message: 'What department does this role belong to?',
-        //             choices: returnAllDepartments()
-        //         }
-
-            // ])
-            .then (data => {
-                //addDepartment(data.dept_name);
-                // if (addDepartment(data.dept_name)) {
-                     askQuestions()
+            .then(data =>   {
+                                var ret = ''
+                                addDepartment(data.dept_name, function(result){
+                                    ret = result;
+                                    if (result) {
+                                        console.log(`${data.dept_name} successfully added`)
+                                        askQuestions()
+                                    }
+                                })
+                                
+                            }
+                            
+                )
+            break;
+        case "ADD A ROLE":
+            inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'role',
+                    message: 'What is the name of the role? (Required)',
+                    validate: role => {
+                        if (role) {
+                            return true;
+                        }
+                        else {
+                            console.log('Role name is required.');
+                            return false;
+                        }
+                    }
+                },
+                {
+                    type: 'input',
+                    name: 'salary',
+                    message: 'What is the salary of the role? (Required)',
+                    validate: salary => {
+                        if (salary) {
+                            return true;
+                        }
+                        else {
+                            console.log('Salary is required.');
+                            return false;
+                        }
+                    }
+                }//,
+                // {
+                //     type: 'rawlist',
+                //     name: 'choice',
+                //     message: 'What department does this role belong to?',
+                //     choices: returnAllDepartments()
                 // }
-                // 
-                //console.log(data)
-            })
+
+            ])
+            // .then (data => {
+            //     //addDepartment(data.dept_name);
+            //     // if (addDepartment(data.dept_name)) {
+            //          askQuestions()
+            //     // }
+            //     // 
+            //     //console.log(data)
+            // })
 
 
     }
