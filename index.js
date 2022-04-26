@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const {addDepartment, getAllDepartments} = require('./lib/department')
-const {getAllRoles} = require('./lib/role')
+const {getAllRoles, addRole} = require('./lib/role')
 const {getAllEmployees} = require('./lib/employee');
 const db = require('./db/connection')
 const cTable = require('console.table')
@@ -25,7 +25,6 @@ const getAllFunctions = () => {
 }
 
 const consumeSelection = (selection) => {
-    console.log(selection.choice)
     switch (selection.choice.toUpperCase()) {
         case "ADD A DEPARTMENT":
             inquirer.prompt([
@@ -81,52 +80,68 @@ const consumeSelection = (selection) => {
                     askQuestions();
                 })
                break;
-        // case "ADD A ROLE":
-        //     inquirer.prompt([
-        //         {
-        //             type: 'input',
-        //             name: 'role',
-        //             message: 'What is the name of the role? (Required)',
-        //             validate: role => {
-        //                 if (role) {
-        //                     return true;
-        //                 }
-        //                 else {
-        //                     console.log('Role name is required.');
-        //                     return false;
-        //                 }
-        //             }
-        //         },
-        //         {
-        //             type: 'input',
-        //             name: 'salary',
-        //             message: 'What is the salary of the role? (Required)',
-        //             validate: salary => {
-        //                 if (salary) {
-        //                     return true;
-        //                 }
-        //                 else {
-        //                     console.log('Salary is required.');
-        //                     return false;
-        //                 }
-        //             }
-        //         }//,
-        //         // {
-        //         //     type: 'rawlist',
-        //         //     name: 'choice',
-        //         //     message: 'What department does this role belong to?',
-        //         //     choices: returnAllDepartments()
-        //         // }
+        case "ADD A ROLE":
+            let deptArray = [];
+            getAllDepartments(function(result){
+                ret = result
+                ret.forEach((department) => {deptArray.push(department.DEPARTMENT_NAME);});
+                //console.log(deptArray)
+            })
+            inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'roleTitle',
+                    message: 'What is the name of the role? (Required)',
+                    validate: role => {
+                        if (role) {
+                            return true;
+                        }
+                        else {
+                            console.log('Role name is required.');
+                            return false;
+                        }
+                    }
+                },
+                {
+                    type: 'input',
+                    name: 'salary',
+                    message: 'What is the salary of the role? (Required)',
+                    validate: salary => {
+                        if (salary) {
+                            return true;
+                        }
+                        else {
+                            console.log('Salary is required.');
+                            return false;
+                        }
+                    }
+                },
+                {
+                    type: 'rawlist',
+                    name: 'roleDept',
+                    message: 'What Department does this role belong to?',
+                    choices: deptArray
+                }
 
-        //     ])
-            // .then (data => {
-            //     //addDepartment(data.dept_name);
-            //     // if (addDepartment(data.dept_name)) {
-            //          askQuestions()
-            //     // }
-            //     // 
-            //     //console.log(data)
-            // })
+            ])
+            .then (data => { 
+                let departmentId;
+
+                ret.forEach((department) => {
+                    //console.log(department.DEPARTMENT_NAME, data.roleDept)
+                    if (department.DEPARTMENT_NAME === data.roleDept) {departmentId = department.DEPARTMENT_ID;}
+                });
+
+                let rtn;
+                addRole(data.roleTitle, data.salary, departmentId, function(result){
+                    rtn = result;
+                    if (result) {
+                        console.log(`${data.roleTitle.toUpperCase()} successfully added`)
+                        askQuestions()
+                    }
+                    else console.log('fail')
+                })            
+            })
 
 
     }
