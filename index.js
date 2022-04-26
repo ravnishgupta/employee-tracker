@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const {addDepartment, getAllDepartments} = require('./lib/department')
 const {getAllRoles} = require('./lib/role')
+const {getAllEmployees} = require('./lib/employee');
 const db = require('./db/connection')
 const cTable = require('console.table')
 
@@ -60,8 +61,7 @@ const consumeSelection = (selection) => {
                 var ret = ''
                 getAllDepartments(function(result){
                     ret = result;
-                    const table = cTable.getTable(ret);
-                    console.log(table)
+                    console.log(cTable.getTable(ret));
                     askQuestions();
                 })
                break;
@@ -69,8 +69,15 @@ const consumeSelection = (selection) => {
                 var ret = ''
                 getAllRoles(function(result){
                     ret = result;
-                    const table = cTable.getTable(ret);
-                    console.log(table)
+                    console.log(cTable.getTable(ret));
+                    askQuestions();
+                })
+               break;
+            case "VIEW ALL EMPLOYEES":
+                var ret = ''
+                getAllEmployees(function(result){
+                    ret = result;
+                    console.log(cTable.getTable(ret));
                     askQuestions();
                 })
                break;
