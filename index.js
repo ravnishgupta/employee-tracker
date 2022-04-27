@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const {addDepartment, getAllDepartments} = require('./lib/department')
 const {getAllRoles, addRole} = require('./lib/role')
-const {getAllEmployees,getAllManagers} = require('./lib/employee');
+const {getAllEmployees,getAllManagers,addEmployee} = require('./lib/employee');
 const db = require('./db/connection')
 const cTable = require('console.table')
 
@@ -203,8 +203,6 @@ const consumeSelection = (selection) => {
                     }
                 ])
                 .then((data) => {
-                    console.log(rolesRec)
-
                     rolesRec.forEach((role) => {
                         if (role.JOB_TITLE == data.empRole)  {(roleID = role.ROLE_ID)}
                     })
@@ -218,33 +216,37 @@ const consumeSelection = (selection) => {
                                 choices: mgrArray
                             }
                         ])
-                        .then   (data =>  {
+                        .then   (mgrData =>  {
                                             mgr.forEach((manager) => {
-                                                if ((manager.first_name === data.empMgr.split(' ')[0]) && ((manager.last_name === data.empMgr.split(' ')[1]))) {
+                                                if ((manager.first_name === mgrData.empMgr.split(' ')[0]) && ((manager.last_name === mgrData.empMgr.split(' ')[1]))) {
                                                     mgrID = manager.id;
                                                 }
-                                            })   
+                                            })
+                                            addEmployee(data.firstName, data.lastName, roleID, mgrID, function(result) {
+                                                rtn = result;
+                                                if (result) {
+                                                    console.log(`${data.firstName.toUpperCase()} ${data.lastName.toUpperCase()} successfully added`)
+                                                    askQuestions()
+                                                }
+                                                else console.log('fail')
+                                            })
                                     })
                                             
                     }
-                    // else {
-                    //         inquirer.prompt([
-                    //             {
-                    //                 type: 'rawlist',
-                    //                 name: 'empRole',
-                    //                 message: 'Please select a Role.',
-                    //                 choices: rolesArray
-                    //             }
-                    //         ])
-                    //         .then   (rolesData => {
-                    //             //   rolesRec.forEach((role) => {
-                    //             //       if (role.JOB_TITLE === rolesData.empRole)  (roleID = rolesRec.ROLE_ID)
-                    //             //       console.log(roleID)
-                    //             //   })
-                    //         })
-                    // }
+                    else {
+                        //console.log(data.firstName, data.lastName, roleID, mgrID)
+                        addEmployee(data.firstName, data.lastName, roleID, mgrID, function(result) {
+                        rtn = result;
+                        if (result) {
+                            console.log(`${data.firstName.toUpperCase()} ${data.lastName.toUpperCase()} successfully added`)
+                            askQuestions()
+                        }
+                        else console.log('fail')
+                    })
+                    }
+                    
+                    
                 })
-                
                 break;
 
 
