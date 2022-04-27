@@ -150,7 +150,7 @@ const consumeSelection = (selection) => {
                 let mgrID = null;
                 let roleID = ''
                 let rolesRec = ''
-                //var roles= ''
+        
                 getAllManagers(function(result){
                     mgr = result
                     mgr.forEach((manager) => mgrArray.push(`${manager.first_name} ${manager.last_name}`));
@@ -234,22 +234,58 @@ const consumeSelection = (selection) => {
                                             
                     }
                     else {
-                        //console.log(data.firstName, data.lastName, roleID, mgrID)
                         addEmployee(data.firstName, data.lastName, roleID, mgrID, function(result) {
-                        rtn = result;
-                        if (result) {
-                            console.log(`${data.firstName.toUpperCase()} ${data.lastName.toUpperCase()} successfully added`)
-                            askQuestions()
-                        }
-                        else console.log('fail')
-                    })
+                            rtn = result;
+                            if (result) {
+                                console.log(`${data.firstName.toUpperCase()} ${data.lastName.toUpperCase()} successfully added`)
+                                askQuestions()
+                            }
+                            else console.log('fail')
+                        })
                     }
                     
                     
                 })
                 break;
+                case "UPDATE AN EMPLOYEE ROLE":
+                    let rolesArr = [];
+                    let employees = [];
+                    getAllRoles(function(result){
+                        mgr = result
+                        result.forEach((role) => rolesArr.push(role.JOB_TITLE));
+                        //console.log(rolesArr);
+                    })
+
+                    getAllEmployees(function(result){
+                        emp = result;
+                        result.forEach((employee) => employees.push(`${employee.FIRST_NAME} ${employee.LAST_NAME}`))
+                        //console.log(employees);
+                    })
+                    inquirer.prompt([
+                        {
+                            type: 'rawlist',
+                            name: 'employee',
+                            message: 'Please select an Employee.',
+                            choices: employees
+                        },
+                        {
+                            type: 'rawlist',
+                            name: 'empRole',
+                            message: 'Please select a Role that you want to switch to.',
+                            choices: rolesArr
+                        }
 
 
+                    ])
+
+                    
+                    
+
+                break;
+                case "QUIT":
+                    console.log("Goodbye!")
+                    db.end()
+                break;
     }
 }
 askQuestions()
