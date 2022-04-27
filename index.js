@@ -145,10 +145,20 @@ const consumeSelection = (selection) => {
             break;
             case "ADD AN EMPLOYEE":
                 let mgrArray = [];
-                let mgr =''
+                let rolesArray = [];
+                let mgr = '';
+                let mgrID = null;
+                let roleID = ''
+                let rolesRec = ''
+                //var roles= ''
                 getAllManagers(function(result){
                     mgr = result
                     mgr.forEach((manager) => mgrArray.push(`${manager.first_name} ${manager.last_name}`));
+                })
+
+                getAllRoles(function(result){
+                    rolesRec = result;
+                    rolesRec.forEach((role) => rolesArray.push(role.JOB_TITLE));
                 })
                 
                 inquirer.prompt([
@@ -181,13 +191,24 @@ const consumeSelection = (selection) => {
                         }
                     },
                     {
+                        type: 'rawlist',
+                        name: 'empRole',
+                        message: 'Please select a Role.',
+                        choices: rolesArray
+                    },
+                    {
                         type: 'confirm',
                         name: 'hasManager',
                         message: "Does this employee have a manager? (Required)"
                     }
                 ])
                 .then((data) => {
-                    
+                    console.log(rolesRec)
+
+                    rolesRec.forEach((role) => {
+                        if (role.JOB_TITLE == data.empRole)  {(roleID = role.ROLE_ID)}
+                    })
+
                     if (data.hasManager) {
                         inquirer.prompt([
                             {
@@ -197,20 +218,33 @@ const consumeSelection = (selection) => {
                                 choices: mgrArray
                             }
                         ])
-                        .then (data =>  {
-                                            let mgrID;
+                        .then   (data =>  {
                                             mgr.forEach((manager) => {
-                                            if ((manager.first_name === data.empMgr.split(' ')[0]) && ((manager.last_name === data.empMgr.split(' ')[1]))) {
-                                                mgrID = manager.id;
-                                            }
-                                        })
-                        });
-                        
+                                                if ((manager.first_name === data.empMgr.split(' ')[0]) && ((manager.last_name === data.empMgr.split(' ')[1]))) {
+                                                    mgrID = manager.id;
+                                                }
+                                            })   
+                                    })
+                                            
                     }
-                    else {
-                        
-                    }
+                    // else {
+                    //         inquirer.prompt([
+                    //             {
+                    //                 type: 'rawlist',
+                    //                 name: 'empRole',
+                    //                 message: 'Please select a Role.',
+                    //                 choices: rolesArray
+                    //             }
+                    //         ])
+                    //         .then   (rolesData => {
+                    //             //   rolesRec.forEach((role) => {
+                    //             //       if (role.JOB_TITLE === rolesData.empRole)  (roleID = rolesRec.ROLE_ID)
+                    //             //       console.log(roleID)
+                    //             //   })
+                    //         })
+                    // }
                 })
+                
                 break;
 
 
