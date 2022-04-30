@@ -1,9 +1,9 @@
 const inquirer = require('inquirer');
 const {addDepartment, getAllDepartments} = require('./lib/department')
 const {getAllRoles, addRole} = require('./lib/role')
-const {getAllEmployees,getAllManagers,addEmployee} = require('./lib/employee');
+const {getAllEmployees,getAllManagers,addEmployee, getEmp} = require('./lib/employee');
 const db = require('./db/connection')
-const cTable = require('console.table')
+const cTable = require('console.table');
 
 
 //view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
@@ -25,7 +25,7 @@ const getAllFunctions = () => {
     return funcArray;
 }
 
-const consumeSelection = (selection) => {
+const consumeSelection = async (selection) => {
     switch (selection.choice.toUpperCase()) {
         case "ADD A DEPARTMENT":
             inquirer.prompt([
@@ -66,20 +66,18 @@ const consumeSelection = (selection) => {
                 })
                break;
             case "VIEW ALL ROLES":
-                let roles = ''
-                getAllRoles(function(result){
-                    roles = result;
-                    console.log(cTable.getTable(roles));
-                    askQuestions();
-                })
+                let roles = [];
+                const rolesData = await getAllRoles();
+                rolesData[0].forEach(role => roles.push(role))
+                console.log(cTable.getTable(roles));
+                askQuestions();
                break;
             case "VIEW ALL EMPLOYEES":
-                let emp = ''
-                getAllEmployees(function(result){
-                    emp = result;
-                    console.log(cTable.getTable(emp));
-                    askQuestions();
-                })
+                let emp = [];
+                const emplData = await getAllEmployees();
+                emplData[0].forEach(employee => emp.push(employee))
+                console.log(cTable.getTable(emp));
+                askQuestions();
             break;
             case "ADD A ROLE":
                 let dept = ''
@@ -145,21 +143,25 @@ const consumeSelection = (selection) => {
             break;
             case "ADD AN EMPLOYEE":
                 let mgrArray = [];
-                let rolesArray = [];
+                
                 let mgr = '';
                 let mgrID = null;
                 let roleID = ''
-                let rolesRec = ''
+                
         
                 getAllManagers(function(result){
                     mgr = result
                     mgr.forEach((manager) => mgrArray.push(`${manager.first_name} ${manager.last_name}`));
                 })
-
-                getAllRoles(function(result){
-                    rolesRec = result;
-                    rolesRec.forEach((role) => rolesArray.push(role.JOB_TITLE));
-                })
+                
+                // getAllRoles(function(result){
+                //     rolesRec = result;
+                //     rolesRec.forEach((role) => rolesArray.push(role.JOB_TITLE));
+                // })
+                let rolesArray = [];
+                //let rolesRec = []
+                const rolesRec = await getAllRoles();
+                rolesRec[0].forEach(role => rolesArray.push(role.JOB_TITLE))
                 
                 inquirer.prompt([
                     {
@@ -203,7 +205,7 @@ const consumeSelection = (selection) => {
                     }
                 ])
                 .then((data) => {
-                    rolesRec.forEach((role) => {
+                    rolesRec[0].forEach((role) => {
                         if (role.JOB_TITLE == data.empRole)  {(roleID = role.ROLE_ID)}
                     })
 
@@ -247,40 +249,30 @@ const consumeSelection = (selection) => {
                     
                 })
                 break;
-                case "UPDATE AN EMPLOYEE ROLE":
-                    let rolesArr = [];
-                    let employees = [];
-                    getAllRoles(function(result){
-                        mgr = result
-                        result.forEach((role) => rolesArr.push(role.JOB_TITLE));
-                        //console.log(rolesArr);
-                    })
+                case "UPDATE AN EMPLOYEE ROLE":       
+                    const data = await getAllRoles();
+                    const jobTitle = data[0].map(role => role.JOB_TITLE)
 
-                    getAllEmployees(function(result){
-                        emp = result;
-                        result.forEach((employee) => employees.push(`${employee.FIRST_NAME} ${employee.LAST_NAME}`))
-                        //console.log(employees);
-                    })
-                    inquirer.prompt([
+                    const empData = await getAllEmployees();
+                    const employeeNamesArray = empData[0].map(employee => `${employee.FIRST_NAME} ${employee.LAST_NAME}`)
+                   
+                     inquirer.prompt([
                         {
                             type: 'rawlist',
                             name: 'employee',
                             message: 'Please select an Employee.',
-                            choices: employees
+                            choices: employeeNamesArray
                         },
                         {
                             type: 'rawlist',
                             name: 'empRole',
                             message: 'Please select a Role that you want to switch to.',
-                            choices: rolesArr
+                            choices: jobTitle
                         }
 
 
-                    ])
-
-                    
-                    
-
+                     ])
+                
                 break;
                 case "QUIT":
                     console.log("Goodbye!")
