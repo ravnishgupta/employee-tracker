@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const {addDepartment, getAllDepartments} = require('./lib/department')
 const {getAllRoles, addRole} = require('./lib/role')
-const {getAllEmployees,getAllManagers,addEmployee, getEmp} = require('./lib/employee');
+const {getAllEmployees,getAllManagers,addEmployee, updateEmployeeRole} = require('./lib/employee');
 const db = require('./db/connection')
 const cTable = require('console.table');
 
@@ -154,12 +154,7 @@ const consumeSelection = async (selection) => {
                     mgr.forEach((manager) => mgrArray.push(`${manager.first_name} ${manager.last_name}`));
                 })
                 
-                // getAllRoles(function(result){
-                //     rolesRec = result;
-                //     rolesRec.forEach((role) => rolesArray.push(role.JOB_TITLE));
-                // })
                 let rolesArray = [];
-                //let rolesRec = []
                 const rolesRec = await getAllRoles();
                 rolesRec[0].forEach(role => rolesArray.push(role.JOB_TITLE))
                 
@@ -259,7 +254,7 @@ const consumeSelection = async (selection) => {
                      inquirer.prompt([
                         {
                             type: 'rawlist',
-                            name: 'employee',
+                            name: 'employeeSelected',
                             message: 'Please select an Employee.',
                             choices: employeeNamesArray
                         },
@@ -269,10 +264,27 @@ const consumeSelection = async (selection) => {
                             message: 'Please select a Role that you want to switch to.',
                             choices: jobTitle
                         }
-
-
                      ])
-                
+                     .then( selectedData => {
+                                let empID = ''
+                                let roleID = ''
+                                empData[0].forEach((employee) => {
+                                    if ((employee.FIRST_NAME === selectedData.employeeSelected.split(' ')[0]) && (employee.LAST_NAME === selectedData.employeeSelected.split(' ')[1])) {empID = employee.EMPLOYEE_ID;}
+                                })
+                                
+                                data[0].forEach((role) => {
+                                    if (role.JOB_TITLE === selectedData.empRole) {roleID = role.ROLE_ID;}
+                                })
+                                try{
+                                    const updateRole = updateEmployeeRole(empID,roleID)
+                                    console.log(`${selectedData.employeeSelected}'s role has been sucessfully changed to ${selectedData.empRole}`)
+                                    askQuestions()
+                                }
+                                catch (err) {
+                                    console.log(err)
+                                }
+                                
+                            })
                 break;
                 case "QUIT":
                     console.log("Goodbye!")
